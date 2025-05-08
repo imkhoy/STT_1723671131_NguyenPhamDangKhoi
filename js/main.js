@@ -21,65 +21,28 @@ $(document).ready(function() {
         }
     }
 
-$("#checkoutForm").submit(function (e) {
-    e.preventDefault();
+    $("#checkoutForm").submit(function(e) {
+        e.preventDefault();
+        const name = $("#name").val();
+        const address = $("#address").val();
+        const phone = $("#phone").val();
+        const paymentMethod = $("#payment").val();
 
-    const nameInput = $("#name");
-    const addressInput = $("#address");
-    const phoneInput = $("#phone");
-
-    const name = nameInput.val().trim();
-    const address = addressInput.val().trim();
-    const phone = phoneInput.val().trim();
-    const paymentMethod = $("#payment").val();
-
-    let isValid = true;
-
-    // Reset lỗi cũ
-    $(".form-control").removeClass("is-invalid");
-    $(".invalid-feedback").text("");
-
-    // Kiểm tra họ tên
-    if (!name) {
-        nameInput.addClass("is-invalid");
-        $("#nameError").text("Vui lòng nhập họ và tên.");
-        isValid = false;
-    } else if (!/^[^\d]+$/.test(name)) {
-        nameInput.addClass("is-invalid");
-        $("#nameError").text("Họ và tên không được chứa số.");
-        isValid = false;
-    } else {
-        // Kiểm tra viết hoa chữ cái đầu
-        const words = name.split(/\s+/);
-        const allCapitalized = words.every(word => /^[A-ZÀ-Ỹ][a-zà-ỹ]*$/.test(word));
-        if (!allCapitalized) {
-            nameInput.addClass("is-invalid");
-            $("#nameError").text("Vui lòng viết hoa chữ cái đầu của mỗi từ.");
-            isValid = false;
+        if (!name || !address || !phone) {
+            alert("Vui lòng nhập đầy đủ thông tin.");
+            return;
         }
-    }
 
-    // Kiểm tra địa chỉ
-    if (!address) {
-        addressInput.addClass("is-invalid");
-        $("#addressError").text("Vui lòng nhập địa chỉ.");
-        isValid = false;
-    }
-
-    // Kiểm tra số điện thoại
-    if (!/^0[1-9][0-9]{8}$/.test(phone)) {
-        phoneInput.addClass("is-invalid");
-        $("#phoneError").text("Số điện thoại phải có 10 chữ số, bắt đầu bằng 0 và chữ số thứ 2 không được là 0.");
-        isValid = false;
-    }
-
-    // Nếu hợp lệ thì lưu và chuyển trang
-    if (isValid) {
         const orderInfo = { name, address, phone, paymentMethod };
         localStorage.setItem("order", JSON.stringify(orderInfo));
+
+        localStorage.removeItem("cart");
+
         alert("Đơn hàng của bạn đã được xác nhận!");
         window.location.href = "confirmation.html";
-    }
+    });
+
+    updateCartCount();
 });
 
 function addToCart(productId) {
